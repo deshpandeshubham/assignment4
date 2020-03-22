@@ -43,6 +43,8 @@ db.counters.remove({ _id: 'items' });
 db.counters.insert({ _id: 'items', current: count });
 
 db.items.createIndex({ id: 1 }, { unique: true });
-db.items.createIndex({ category: 1 });
-db.items.createIndex({ name: 1 });
-db.items.createIndex({ image: 1 });
+db.items.createIndex({ Category: 1 });
+db.items.createIndex({ Name: 1 });
+db.items.createIndex({ Image: 1 });
+
+print(db.items.find({}));

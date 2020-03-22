@@ -139,7 +139,7 @@ class Product extends React.Component {
 
   async createProduct(newProduct) {
     const query = `mutation {
-            productAdd(product:{
+            productAdd(product:{    
                 Name: "${newProduct.productName}",
                 Price: ${newProduct.productPrice},
                 Image: "${newProduct.productImage}",

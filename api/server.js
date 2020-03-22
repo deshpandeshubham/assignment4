@@ -1,14 +1,13 @@
 /* eslint linebreak-style: ["error", "windows"] */
 
-require('dotenv').config();
-const express = require('express');
-
-const app = express();
 const fs = require('fs');
-const { ApolloServer } = require('apollo-server-express');
+const express = require('express');
 const { MongoClient } = require('mongodb');
+const { ApolloServer } = require('apollo-server-express');
 
-const url = process.env.DB_URL || 'mongodb+srv://shubham:sd12345@cluster0-kblzo.mongodb.net/inventory?retryWrites=true&w=majority';
+require('dotenv').config();
+
+const url = process.env.DB_URL || 'mongodb+srv://shubham:sd12345@cluster0-kblzo.mongodb.net/inventory?retryWrites=true';
 const port = process.env.API_SERVER_PORT || 3000;
 let db;
 
@@ -55,6 +54,8 @@ const server = new ApolloServer({
   typeDefs: fs.readFileSync('schema.graphql', 'utf-8'),
   resolvers,
 });
+
+const app = express();
 
 server.applyMiddleware({ app, path: '/graphql' });
 
