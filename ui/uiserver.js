@@ -1,9 +1,8 @@
-/* eslint linebreak-style: ["error", "windows"] */
-
+/* eslint linebreak-style: ["error","windows"] */
 const express = require('express');
+require('dotenv').config();
 
 const app = express();
-require('dotenv').config();
 
 app.use(express.static('public'));
 
@@ -15,7 +14,6 @@ app.get('/env.js', (req, res) => {
 });
 
 const port = process.env.UI_SERVER_PORT || 8000;
-
 app.listen(port, () => {
   console.log(`UI started on port ${port}`);
 });

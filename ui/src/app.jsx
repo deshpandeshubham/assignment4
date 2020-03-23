@@ -1,28 +1,9 @@
 /* eslint-disable react/jsx-no-target-blank */
-/* eslint linebreak-style: ["error", "windows"] */
+/* eslint linebreak-style: ["error","windows"] */
 /* eslint "react/react-in-jsx-scope": "off" */
 /* globals React ReactDOM */
 /* eslint "react/jsx-no-undef": "off" */
 /* eslint "no-alert": "off" */
-
-function ProductTable({ products }) {
-  const productRows = products.map(product => <ProductRow key={product.id} product={product} />);
-  return (
-    <table className="borderedTable">
-      <thead align="left">
-        <tr>
-          <th>Product Name</th>
-          <th>Price</th>
-          <th>Category</th>
-          <th>Image</th>
-        </tr>
-      </thead>
-      <tbody>
-        {productRows}
-      </tbody>
-    </table>
-  );
-}
 
 function ProductRow({ product }) {
   return (
@@ -46,36 +27,34 @@ class AddProduct extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const form = document.forms.productAdd;
-    let price = form.prdPrice.value;
-    price = price.slice(1);
-    const prd = {
-      productName: form.prdName.value,
-      productPrice: price,
-      productCategory: form.prdCat.value,
-      productImage: form.prdImg.value,
+    const form = document.forms.productAddForm;
+    const product = {
+      Name: form.product.value,
+      Price: form.price.value.slice(1),
+      Category: form.category.value,
+      Image: form.image.value,
     };
     const { createProduct } = this.props;
-    createProduct(prd);
-    form.prdName.value = '';
-    form.prdPrice.value = '$';
-    form.prdImg.value = '';
+    createProduct(product);
+    form.price.value = '$';
+    form.product.value = '';
+    form.image.value = '';
   }
 
   render() {
     return (
       <div>
-        <form name="productAdd" className="formAdd" onSubmit={this.handleSubmit}>
+        <form name="productAddForm" className="formAdd" onSubmit={this.handleSubmit}>
           <div>
             <p>
               <label htmlFor="category">
                 Category
                 <br />
                 <select id="prdCat" name="category">
-                  <option value="shirts">Shirts</option>
+                  <option value="shirt">Shirts</option>
                   <option value="jeans">Jeans</option>
-                  <option value="jackets">Jackets</option>
-                  <option value="sweaters">Sweaters</option>
+                  <option value="jacket">Jackets</option>
+                  <option value="sweater">Sweaters</option>
                   <option value="accessories">Accessories</option>
                 </select>
               </label>
@@ -84,7 +63,7 @@ class AddProduct extends React.Component {
               <label htmlFor="price">
                 Price Per Unit
                 <br />
-                <input type="text" name="prdPrice" defaultValue="$" />
+                <input type="text" name="price" defaultValue="$" />
               </label>
             </p>
             <p>
@@ -96,14 +75,14 @@ class AddProduct extends React.Component {
               <label htmlFor="name">
                 Product Name
                 <br />
-                <input type="text" name="prdName" />
+                <input type="text" name="product" />
               </label>
             </p>
             <p>
               <label htmlFor="image">
                 Image URL
                 <br />
-                <input type="text" name="prdImg" />
+                <input type="text" name="image" />
               </label>
             </p>
           </div>
@@ -111,6 +90,25 @@ class AddProduct extends React.Component {
       </div>
     );
   }
+}
+
+function ProductTable({ products }) {
+  const productRows = products.map(product => <ProductRow key={product.id} product={product} />);
+  return (
+    <table className="borderedTable">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+      <tbody>
+        {productRows}
+      </tbody>
+    </table>
+  );
 }
 
 class Product extends React.Component {
@@ -121,6 +119,7 @@ class Product extends React.Component {
   }
 
   componentDidMount() {
+    document.forms.productAddForm.price.value = '$';
     this.loadData();
   }
 
@@ -136,19 +135,22 @@ class Product extends React.Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     });
-    const resposeResult = await response.json();
-    this.setState({ products: resposeResult.data.productList });
+    const result = await response.json();
+    this.setState({ products: result.data.productList });
   }
 
-  async createProduct(newProduct) {
+  async createProduct(product) {
+    const newProduct = product;
     const query = `mutation {
-            productAdd(product:{    
-                Name: "${newProduct.productName}",
-                Price: ${newProduct.productPrice},
-                Image: "${newProduct.productImage}",
-                Category: ${newProduct.productCategory},
-            }) {_id}
-        }`;
+            productAdd(product:{
+              Name: "${newProduct.Name}",
+              Price: ${newProduct.Price},
+              Image: "${newProduct.Image}",
+              Category: ${newProduct.Category},
+            }) {
+              _id
+            }
+          }`;
     await fetch(window.ENV.UI_API_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

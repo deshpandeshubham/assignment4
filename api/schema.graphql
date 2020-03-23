@@ -11,21 +11,22 @@ type Product {
     id: Int!
 	Name: String!
 	Price: Float
-    Image: String
+	Image: String
     Category: Category!
 }
 
-input productInput {
+
+input productInput{
     Name: String!
 	Price: Float
-    Image: String
+	Image: String
     Category: Category!
 }
 
-enum Category {
-    shirts
+enum Category{
+    shirt
     jeans
-    sweaters
-    jackets
+    sweater
+    jacket
     accessories
 }

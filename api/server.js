@@ -4,17 +4,14 @@ const fs = require('fs');
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const { ApolloServer } = require('apollo-server-express');
-
 require('dotenv').config();
 
-const url = process.env.DB_URL || 'mongodb+srv://shubham:sd12345@cluster0-kblzo.mongodb.net/inventory?retryWrites=true';
-const port = process.env.API_SERVER_PORT || 3000;
+const url = process.env.DB_URL || 'mongodb+srv://shubham:sd12345@cluster0-kblzo.mongodb.net/inventory?retryWrites=true&w=majority';
 let db;
 
-
 async function productList() {
-  const productDatabase = await db.collection('items').find({}).toArray();
-  return productDatabase;
+  const productDB = await db.collection('items').find({}).toArray();
+  return productDB;
 }
 
 async function getNextSequence(name) {
@@ -25,12 +22,12 @@ async function getNextSequence(name) {
   );
   return result.value.current;
 }
-
-async function productAdd(_, { prd }) {
-  const product = prd;
-  product.id = await getNextSequence('items');
+async function productAdd(_, { product }) {
+  const newProduct = product;
+  newProduct.id = await getNextSequence('items');
   const result = await db.collection('items').insertOne(product);
-  const savedProduct = await db.collection('items').findOne({ _id: result.insertedId });
+  const savedProduct = await db.collection('items')
+    .findOne({ _id: result.insertedId });
   return savedProduct;
 }
 
@@ -59,6 +56,8 @@ const app = express();
 
 server.applyMiddleware({ app, path: '/graphql' });
 
+const port = process.env.API_SERVER_PORT || 3000;
+
 (async () => {
   try {
     await connectToDb();
@@ -66,6 +65,6 @@ server.applyMiddleware({ app, path: '/graphql' });
       console.log(`API Server started on port ${port}`);
     });
   } catch (err) {
-    console.log(err);
+    console.log('ERROR:', err);
   }
 })();
