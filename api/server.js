@@ -22,12 +22,12 @@ async function getNextSequence(name) {
   );
   return result.value.current;
 }
+
 async function productAdd(_, { product }) {
   const newProduct = product;
   newProduct.id = await getNextSequence('items');
   const result = await db.collection('items').insertOne(product);
-  const savedProduct = await db.collection('items')
-    .findOne({ _id: result.insertedId });
+  const savedProduct = await db.collection('items').findOne({ _id: result.insertedId });
   return savedProduct;
 }
 
